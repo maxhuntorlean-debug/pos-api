@@ -12,7 +12,7 @@ products.get('/:barcode', async (c) => {
   try {
     const product = await c.env.DB
       .prepare(`
-        SELECT barcode, name, buy_price, sell_price, created_at
+        SELECT barcode, name, buy_price, sell_price
         FROM products
         WHERE barcode = ?
         LIMIT 1
