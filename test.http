@@ -1,5 +1,4 @@
-@host = https://cf-auth-starter.lateshoy.workers.dev
-
+@host = https://pos-api.lateshoy.workers.dev
 
 ###############################################################################
 # AUTH
@@ -12,7 +11,7 @@ Content-Type: application/json
 {
   "name": "Administrator",
   "username": "admin",
-  "password": "Test12345"
+  "password": "Pizda2000"
 }
 
 
@@ -33,7 +32,7 @@ Content-Type: application/json
 
 {
   "username": "admin",
-  "password": "Test12345"
+  "password": "Pizda2000"
 }
 
 

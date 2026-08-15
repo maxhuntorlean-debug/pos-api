@@ -347,7 +347,7 @@ auth.post('/login', async (c) => {
 
   c.header(
     'Set-Cookie',
-    `session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=31536000`
+    `session=${sessionToken}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=31536000`
   )
 
   return c.json({
@@ -369,16 +369,43 @@ auth.post('/login', async (c) => {
 auth.get(
   '/me',
   authMiddleware,
-  (c) => {
+  async (c) => {
     const user = c.get('user')
+
+    const result = await c.env.DB
+      .prepare(`
+        SELECT
+          permissions.code
+        FROM users
+
+        JOIN role_permissions
+          ON role_permissions.role_id = users.role_id
+
+        JOIN permissions
+          ON permissions.id = role_permissions.permission_id
+
+        WHERE users.id = ?
+
+        ORDER BY permissions.code
+      `)
+      .bind(user.id)
+      .all<{
+        code: string
+      }>()
+
+    const permissions = result.results.map(
+      (permission) => permission.code
+    )
 
     return c.json({
       ok: true,
-      user
+      user: {
+        ...user,
+        permissions
+      }
     })
   }
 )
-
 
 // ======================================
 // LOGOUT
@@ -401,7 +428,7 @@ auth.post('/logout', async (c) => {
 
   c.header(
     'Set-Cookie',
-    'session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0'
+    'session=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0'
   )
 
   return c.json({

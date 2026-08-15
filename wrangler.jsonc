@@ -1,13 +1,13 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "cf-auth-starter",
+	"name": "pos-api",
 	"main": "src/index.ts",
 	"compatibility_date": "2026-08-14",
 	"d1_databases": [
 		{
 			"binding": "DB",
-			"database_name": "cf-auth-starter-clean-db",
-			"database_id": "676b3344-8e46-4b65-aa57-ceeff8213a46",
+			"database_name": "pos-api-db",
+			"database_id": "6d958d6e-da90-4657-b70f-89460358fb84",
 			"remote": true
 		}
 	]
