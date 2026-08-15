@@ -11,10 +11,15 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>()
 
+const allowedOrigins = new Set([
+  'https://pos-admin.lateshoy.workers.dev',
+  'https://pos-client.lateshoy.workers.dev'
+])
+
 app.use(
   '/api/*',
   cors({
-    origin: 'https://pos-admin.lateshoy.workers.dev',
+    origin: (origin) => allowedOrigins.has(origin) ? origin : '',
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type'],
     credentials: true
