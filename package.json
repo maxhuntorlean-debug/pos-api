@@ -3,7 +3,8 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy --minify",
+    "migrate": "wrangler d1 migrations apply pos-api-db --remote",
+    "deploy": "npm run migrate && wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
