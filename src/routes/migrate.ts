@@ -7,33 +7,50 @@ migrate.post('/products', async (c) => {
   const batchSize = 500
   let copied = 0
 
-  while (true) {
-    const rows = await c.env.OLD_DB
-      .prepare('SELECT barcode, name, buy_price, sell_price, created_at FROM products LIMIT ? OFFSET ?')
-      .bind(batchSize, offset)
-      .all()
+  try {
+    while (true) {
+      const rows = await c.env.OLD_DB
+        .prepare('SELECT barcode, name, buy_price, sell_price, created_at FROM products LIMIT ? OFFSET ?')
+        .bind(batchSize, offset)
+        .all()
 
-    if (!rows.results.length) break
+      if (!rows.results.length) break
 
-    for (const product of rows.results as any[]) {
-      await c.env.DB.prepare(`
-        INSERT OR IGNORE INTO products
-        (barcode, name, buy_price, sell_price, created_at)
-        VALUES (?, ?, ?, ?, ?)
-      `).bind(
-        product.barcode,
-        product.name,
-        product.buy_price,
-        product.sell_price,
-        product.created_at
-      ).run()
-      copied++
+      const statements = (rows.results as any[]).map((product) =>
+        c.env.DB.prepare(`
+          INSERT OR IGNORE INTO products
+          (barcode, name, buy_price, sell_price, created_at)
+          VALUES (?, ?, ?, ?, ?)
+        `).bind(
+          product.barcode,
+          product.name,
+          product.buy_price,
+          product.sell_price,
+          product.created_at
+        )
+      )
+
+      try {
+        await c.env.DB.batch(statements)
+      } catch (error: any) {
+        return c.json({
+          ok: false,
+          offset,
+          error: error?.message || String(error)
+        }, 500)
+      }
+
+      copied += statements.length
+      offset += batchSize
     }
 
-    offset += batchSize
+    return c.json({ ok: true, copied })
+  } catch (error: any) {
+    return c.json({
+      ok: false,
+      error: error?.message || String(error)
+    }, 500)
   }
-
-  return c.json({ ok: true, copied })
 })
 
 export default migrate
