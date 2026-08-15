@@ -5,6 +5,7 @@ import auth from './routes/auth'
 import users from './routes/users'
 import roles from './routes/roles'
 import products from './routes/products'
+import sales from './routes/sales'
 
 type Bindings = {
   DB: D1Database
@@ -38,5 +39,6 @@ app.route('/api/auth', auth)
 app.route('/api/admin/users', users)
 app.route('/api/admin/roles', roles)
 app.route('/api/products', products)
+app.route('/api/sales', sales)
 
 export default app
