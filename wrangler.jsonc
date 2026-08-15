@@ -9,12 +9,6 @@
 			"database_name": "pos-api-db",
 			"database_id": "6d958d6e-da90-4657-b70f-89460358fb84",
 			"remote": true
-		},
-		{
-			"binding": "OLD_DB",
-			"database_name": "kotopanda-pos-db",
-			"database_id": "dff83208-df80-44f3-b5be-9943d13440ec",
-			"remote": true
 		}
 	],
 	"observability": {
